@@ -1,0 +1,387 @@
+﻿var currenturl;
+var record = sessionStorage;
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab){
+    if(changeInfo.status == "loading"){
+    	updateIcon("icon16");
+    	if (currenturl) {
+    		var oldurl = currenturl;
+    		currenturl = tab.url;
+    		var newurl = currenturl;
+        if (newurl != "chrome://newtab/") {
+            setChildTextNode(newurl, oldurl);
+        }
+    	}else{
+    		currenturl = tab.url;
+        if (currenturl != 'chrome://newtab/') {
+            setChildTextNode(currenturl, '');
+        }	
+    	}
+    }
+});
+
+
+function parseURL(url) { 
+	var a = document.createElement('a'); 
+	a.href = url; 
+	return { 
+		source: url, 
+		protocol: a.protocol.replace(':', ''), 
+		host: a.hostname, 
+		port: a.port, 
+		query: a.search, 
+		params: (function(){ 
+			var ret = {}, 
+			seg = a.search.replace(/^\?/, '').split('&'), 
+			len = seg.length, i = 0, s; 
+			for (; i < len; i++) { 
+				if (!seg[i]) { continue; } 
+			s = seg[i].split('='); 
+		ret[s[0]] = s[1]; 
+	} 
+		return ret; 
+	})(),
+	file: (a.pathname.match(/\/([^\/?#]+)$/i) || [,''])[1], 
+	hash: a.hash.replace('#',''), 
+	path: a.pathname.replace(/^([^\/])/,'/$1'), 
+	relative: (a.href.match(/tps?:\/\/[^\/]+(.+)/) || [,''])[1], 
+	segments: a.pathname.replace(/^\//,'').split('/') 
+	}; 
+}
+
+
+//update icon
+function updateIcon(name) {
+  chrome.browserAction.setIcon({path: name + ".png"});
+}
+
+function show(title, content, tagname) {
+  var notice = new Notification(title, {
+    body: content,
+    icon: "icon48.png",
+    tag: tagname, // 可以加一个tag
+  });
+  // function clicked(){
+  //   windows.open(content, '_blank');
+  //   notice.close();
+  // }
+  // notice.addEventListener('click',clicked);
+}
+
+
+function gitfinder(protocol, host, port, path){
+  var giturl = protocol + "://" + host + path + ".git/config";
+    if(port){
+      giturl = protocol + "://" + host + ":" + port + path + ".git/config";
+    }
+   $.ajax({
+      type: "GET",
+      url : giturl,
+      complete: function(xmlhttp) { 
+        if (xmlhttp.readyState == 4) { 
+          if (xmlhttp.status == 200) {  
+                var ct=xmlhttp.getResponseHeader("Connection");
+                var cct= "close";
+                if(ct != cct){
+                  var responseText = xmlhttp.responseText;
+                  var match = responseText.match(/repository/i);
+                    if(match){
+                      updateIcon("fire");
+                      show("Git Leak", giturl, giturl);
+                    }
+                }
+            }
+        }
+      },
+  });
+}
+
+
+function svnfinder(protocol, host, port, path){
+	var svnurl = protocol + "://" + host + path + ".svn/entries";
+    if(port){
+      svnurl = protocol + "://" + host + ":" + port + path + ".svn/entries";
+    }
+   $.ajax({
+      type: "GET",
+      url : svnurl,
+      complete: function(xmlhttp) { 
+				//完成交互
+				if (xmlhttp.readyState == 4) { 
+				 		//状态码
+          if (xmlhttp.status == 200) {  
+                var ct=xmlhttp.getResponseHeader("Connection");
+                var cct= "close";
+                if(ct != cct){
+                 	var responseText = xmlhttp.responseText;
+                	var match1 = responseText.match(/svn/i);
+                  var match2 = responseText.match(/dir/i);
+        						if(match1 && match2 ){
+        							updateIcon("fire");
+        							show("Svn Leak", svnurl, svnurl);
+        						}
+                }
+            } 
+			   }
+			},
+  });
+}
+
+
+function svnfindernew(protocol, host, port, path){
+    var svnurl_new = protocol + "://" + host + path + ".svn/wc.db";
+    if(port){
+      svnurl_new = protocol + "://" + host + ":" + port + path + ".svn/wc.db";
+    }
+     $.ajax({
+        type: "GET",
+        url : svnurl_new,
+        complete: function(xmlhttp) { 
+            //完成交互
+           if (xmlhttp.readyState == 4) { 
+              //状态码
+            if (xmlhttp.status == 200) {  
+                //updateIcon("fire");
+                 var ct=xmlhttp.getResponseHeader("Connection");
+                 var cct= "close";
+                 if(ct != cct){
+                  var responseText = xmlhttp.responseText;
+                  var match = responseText.match(/SQLite/i);
+                  if(match){
+                    updateIcon("fire");
+                    show("Svn Leak", svnurl_new, svnurl_new);
+                  }
+                 }
+             } 
+           }
+        },
+    });
+}
+
+//find bash history file
+function bash(protocol, host, port, path){
+	var bashurl =protocol + "://" + host + path + ".bash_history";
+  if(port){
+    bashurl =protocol + "://" + host + ":" + port + path + ".bash_history";
+  }
+  $.ajax({
+        type: "GET",
+        url: bashurl,
+        complete: function(xmlhttp) { 
+				//完成交互
+				 if (xmlhttp.readyState == 4) { 
+				 		if (xmlhttp.status == 200) {  
+             	var responseText = xmlhttp.responseText;
+            	var match = responseText.match(/((cd)\s\w*\/)|(vi\s\w*\.\w*)/i);
+  						if(match){
+  							updateIcon("fire");
+  							show("Bash History Leak", bashurl, bashurl);
+  						}
+            } 
+				 }
+		  },
+  });
+}
+
+//find zip backup file
+function backupfinder_zip(protocol, host, port, path, filename){
+  var backupURL_zip =protocol + "://" + host + path + filename + ".zip";
+  if(port){
+    backupURL_zip =protocol + "://" + host + ":" + port + path + filename + ".zip";
+  }
+
+  $.ajax({
+      type: "HEAD",
+      url : backupURL_zip,
+      complete: function(xmlhttp) { 
+        //完成交互
+        if (xmlhttp.readyState == 4) { 
+            //状态码
+          if (xmlhttp.status == 200) {  
+                var ct=xmlhttp.getResponseHeader("Content-Type");
+                if(ct == "application/zip"){
+                    updateIcon("fire");
+                    show("Maybe a backup file find", backupURL_zip, backupURL_zip);
+                }
+            }
+        }
+      },
+  });
+}
+
+//find tar.gz backup file
+function backupfinder_tar_gz(protocol, host, port, path, filename){
+  var backupURL_gz =protocol + "://" + host + path + filename + ".tar.gz";
+  if(port){
+    backupURL_gz =protocol + "://" + host + ":" + port + path + filename + ".tar.gz";
+  }
+
+  $.ajax({
+      type: "HEAD",
+      url : backupURL_gz,
+      complete: function(xmlhttp) { 
+        //完成交互
+        if (xmlhttp.readyState == 4) { 
+            //状态码
+          if (xmlhttp.status == 200) {  
+                var ct=xmlhttp.getResponseHeader("Content-Type");
+                if(ct == "application/octet-stream"){
+                    updateIcon("fire");
+                    show("Maybe a backup file find", backupURL_gz, backupURL_gz);
+                }
+            }
+        }
+      },
+  });
+}
+
+//check phpinfo
+function phpinfoFinder(protocol, host, port, path, filename){
+  var phpinfourl =protocol + "://" + host + path + filename + ".php";
+  if(port){
+    phpinfourl =protocol + "://" + host + ":" + port + path + filename + ".php";
+  }
+
+  $.ajax({
+      type: "GET",
+      url : phpinfourl,
+      complete: function(xmlhttp) { 
+        //完成交互
+        if (xmlhttp.readyState == 4) {
+            //状态码
+          if (xmlhttp.status == 200) {  
+              var responseText = xmlhttp.responseText;
+              var match1 = responseText.match(/PHP Version/);
+              var match2 = responseText.match(/Zend/);
+              if(match1 && match2){
+                updateIcon("fire");
+                //alert(phpinfourl);
+                show("A phpinfo file find", phpinfourl, phpinfourl);
+              }
+            }
+        }
+      },
+  });
+}
+
+
+//check phpmyadmin
+function phpmyadmin(protocol, host, port, path){
+  var phpmyadminurl = protocol + "://" + host + path + "index.php";
+  if(port){
+    phpmyadminurl = protocol + "://" + host + ":" + port + path + "index.php";
+  }
+
+  $.ajax({
+      type: "GET",
+      url : phpmyadminurl,
+      complete: function(xmlhttp) { 
+        if (xmlhttp.readyState == 4) {
+          if (xmlhttp.status == 200) {  
+              var responseText = xmlhttp.responseText;
+              var match1 = responseText.match(/phpMyAdmin/);
+              var match2 = responseText.match(/English/);
+              if(match1 && match2){
+                updateIcon("fire");
+                show("phpMyAdmin find", phpmyadminurl, phpmyadminurl);
+              }
+            }
+        }
+      },
+  });
+}
+
+
+function setStorage(protocol, host, port, path){
+    if (port) {
+        var idx = protocol + "://" + host + ':' + port + path;
+    } else {
+        var idx = protocol + "://" + host + path;
+    }
+    record.setItem(idx, true);
+}
+
+
+function getStorage(protocol, host, port, path){
+    if (port) {
+        var idx =protocol + "://" + host + ':' + port + path;
+    } else {
+        var idx = protocol + "://" +  host + path;
+    }
+    
+    if (record.getItem(idx)) {
+      return true;
+    }else{
+      return false;
+    }
+}
+
+
+function getPathName(path, file){
+    tmp_path = path.replace(file,"").split('/');
+    tmp_path.splice(0,1);
+    return tmp_path;
+}
+
+
+function leakFileFind(protocol,host, port, path){
+    //文件泄露
+    //phpinfo文件
+    var phpinfoFilenameArr = new Array('1', 'php', 'phpinfo', 'test');
+    if (!getStorage(protocol,host, port, path)) {
+          bash(protocol,host,port,path);
+          gitfinder(protocol,host, port, path);
+          svnfinder(protocol,host,port,path);
+          svnfindernew(protocol,host, port, path);
+          for (var j = phpinfoFilenameArr.length - 1; j >= 0; j--) {
+              phpinfoFinder(protocol, host, port, path, phpinfoFilenameArr[j]);
+          }
+          setStorage(protocol,host, port, path);
+     }
+}
+
+
+function backupfileFind(protocol, host, port, path, OnlyPathName) {
+    //备份文件
+    var backFilenameArr = new Array('backup', 'www', '2017', '2018', 'back')
+    if (!getStorage(protocol, host, port, path + 'backupFind')) {
+      for (var i = backFilenameArr.length - 1; i >= 0; i--) {
+        backupfinder_zip(protocol, host, port, path, backFilenameArr[i]);
+        backupfinder_tar_gz(protocol, host, port, path, backFilenameArr[i]);
+      }
+      backupfinder_zip(protocol, host, port, path, '../' + OnlyPathName);
+      backupfinder_tar_gz(protocol, host, port, path, '../' + OnlyPathName);
+      setStorage(protocol, host, port, path + 'backupFind');
+    }
+}
+
+function setChildTextNode(newurl,oldurl) {
+    var parsedURL = parseURL(newurl);
+    var protocol = parsedURL.protocol;
+    var host = parsedURL.host;
+    var port = parsedURL.port;
+    var path = parsedURL.path;
+    var file = parsedURL.file;
+    var oldhost = parseURL(oldurl).host;
+
+    pathAry = getPathName(path, file);
+    //
+    if (pathAry.length == 1) {
+        //没有子目录
+        leakFileFind(protocol, host, port, '/');
+        phpmyadmin(protocol, host, port, '/phpMyAdmin/');
+        backupfileFind(protocol, host, port, '/', host);
+    } else if(pathAry.length > 1 && pathAry[0] != '.git' && pathAry[0] != '.svn'){
+        //探测一级目录
+        leakFileFind(protocol, host, port, '/');
+        phpmyadmin(protocol, host, port, '/phpMyAdmin/');
+        leakFileFind(protocol, host, port, '/' + pathAry[0] + '/');
+        phpmyadmin(protocol, host, port, '/' + pathAry[0] + '/phpMyAdmin/');
+        backupfileFind(protocol, host, port, '/', host);
+        backupfileFind(protocol, host, port, '/' + pathAry[0] + '/', pathAry[0]);
+        //探测二级目录
+        if (pathAry[1]) {
+            leakFileFind(protocol, host, port, '/' + pathAry[0] + '/' + pathAry[1] + '/');
+            backupfileFind(protocol, host, port, '/' + pathAry[0] + '/' + pathAry[1] + '/', pathAry[1]);
+        }
+    }
+}

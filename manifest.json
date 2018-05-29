@@ -1,0 +1,35 @@
+{
+  "name": "SensInfo Finder",
+  "description": "creat by Aring QQ:304778619. updated by donot 1.3",
+  "version": "1.3.2", 
+  
+  "background": {
+      "scripts": [
+          "jquery-1.7.2.min.js",
+          "background.js"
+      ]
+  },
+
+  // "default_popup": "popup.html",
+
+  "permissions": [
+    "tabs",
+    "http://*/*",
+    "https://*/*",
+    "notifications"
+  ],
+
+  "icons": 
+  { 
+    "16": "icon16.png",             
+    "48": "icon48.png",            
+    "128": "icon128.png" 
+  },  
+
+  "browser_action": {
+	   "default_icon": "icon16.png"
+	},
+
+  "manifest_version":2
+}
+
