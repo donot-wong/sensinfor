@@ -342,7 +342,7 @@ function leakFileFind(protocol,host, port, path){
 
 function backupfileFind(protocol, host, port, path, OnlyPathName) {
     //备份文件
-    var backFilenameArr = new Array('backup', 'www', '2017', '2018', 'back')
+    var backFilenameArr = new Array('backup', 'www', '2017', '2018', 'back', 'upload')
     if (!getStorage(protocol, host, port, path + 'backupFind')) {
       for (var i = backFilenameArr.length - 1; i >= 0; i--) {
         backupfinder_zip(protocol, host, port, path, backFilenameArr[i]);
