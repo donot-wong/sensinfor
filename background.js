@@ -1,6 +1,26 @@
 ﻿var currenturl;
 var record = sessionStorage;
+var status = true;
+
+chrome.contextMenus.create({
+    title: "Stop Sensinfor",
+    id: "Sensinfor",
+    onclick: function(){
+        if (status == 'true') {
+            chrome.contextMenus.update('Sensinfor', {title: 'Start Sensinfor'} , function(){});
+            status = false;
+        }else{
+            chrome.contextMenus.update('Sensinfor', {title: 'Stop Sensinfor'} , function(){});
+            status = true;
+        }
+    }
+});
+
+
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab){
+    if (status != 'true') {
+        return;
+    }
     if(changeInfo.status == "loading"){
     	updateIcon("icon16");
     	if (currenturl) {
