@@ -387,6 +387,7 @@ function leakFileFind(protocol,host, port, path){
           for (var j = phpinfoFilenameArr.length - 1; j >= 0; j--) {
               phpinfoFinder(protocol, host, port, path, phpinfoFilenameArr[j]);
           }
+          phpmyadmin(protocol, host, port, path + 'phpMyAdmin/');
           setStorage(protocol,host, port, path);
      }
 }
@@ -420,14 +421,11 @@ function setChildTextNode(newurl,oldurl) {
     if (pathAry.length == 1) {
         //没有子目录
         leakFileFind(protocol, host, port, '/');
-        phpmyadmin(protocol, host, port, '/phpMyAdmin/');
         backupfileFind(protocol, host, port, '/', host);
     } else if(pathAry.length > 1 && pathAry[0] != '.git' && pathAry[0] != '.svn'){
         //探测一级目录
         leakFileFind(protocol, host, port, '/');
-        phpmyadmin(protocol, host, port, '/phpMyAdmin/');
         leakFileFind(protocol, host, port, '/' + pathAry[0] + '/');
-        phpmyadmin(protocol, host, port, '/' + pathAry[0] + '/phpMyAdmin/');
         backupfileFind(protocol, host, port, '/', host);
         backupfileFind(protocol, host, port, '/' + pathAry[0] + '/', pathAry[0]);
         //探测二级目录
