@@ -378,7 +378,7 @@ function getPathName(path, file){
 function leakFileFind(protocol,host, port, path){
     //文件泄露
     //phpinfo文件
-    var phpinfoFilenameArr = new Array('1', 'php', 'phpinfo', 'test');
+    var phpinfoFilenameArr = new Array('1', 'php', 'phpinfo', 'test', 'info');
     if (!getStorage(protocol,host, port, path)) {
           bash(protocol,host,port,path);
           gitfinder(protocol,host, port, path);
