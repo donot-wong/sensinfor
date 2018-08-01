@@ -8,6 +8,10 @@ A chrome extension use to find leak file and backup file
 ### updated by [donot](https://blog.donot.me)
 
 
+### 2018.8.1
+1. 更新svn检测规则，减少误报
+
+
 ### 2018.5.30
 
 1. 新增对phpmyadmin目录检测
