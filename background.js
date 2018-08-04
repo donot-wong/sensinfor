@@ -136,7 +136,8 @@ function gitfinder(protocol, host, port, path){
                 if(ct != cct){
                   var responseText = xmlhttp.responseText;
                   var match = responseText.match(/repository/i);
-                    if(match){
+                  var match2 = responseText.match(/DOCTYPE/i);
+                    if(match && !match2){
                       updateIcon("fire");
                       show("Git Leak", giturl, giturl);
                     }
