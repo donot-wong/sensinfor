@@ -23,19 +23,9 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab){
     }
     if(changeInfo.status == "loading"){
     	updateIcon("icon16");
-    	if (currenturl) {
-    		var oldurl = currenturl;
-    		currenturl = tab.url;
-    		var newurl = currenturl;
-        if (newurl != "chrome://newtab/") {
-            setChildTextNode(newurl, oldurl);
-        }
-    	}else{
-    		currenturl = tab.url;
-        if (currenturl != 'chrome://newtab/') {
-            setChildTextNode(currenturl, '');
-        }	
-    	}
+      if (tab.url.substr(0, 6) != 'chrome') {
+          startScan(tab.url);
+      }
     }
 });
 
@@ -44,27 +34,28 @@ function parseURL(url) {
 	var a = document.createElement('a'); 
 	a.href = url; 
 	return { 
-		source: url, 
-		protocol: a.protocol.replace(':', ''), 
-		host: a.hostname, 
-		port: a.port, 
-		query: a.search, 
-		params: (function(){ 
-			var ret = {}, 
-			seg = a.search.replace(/^\?/, '').split('&'), 
-			len = seg.length, i = 0, s; 
-			for (; i < len; i++) { 
-				if (!seg[i]) { continue; } 
-			s = seg[i].split('='); 
-		ret[s[0]] = s[1]; 
-	} 
-		return ret; 
-	})(),
-	file: (a.pathname.match(/\/([^\/?#]+)$/i) || [,''])[1], 
-	hash: a.hash.replace('#',''), 
-	path: a.pathname.replace(/^([^\/])/,'/$1'), 
-	relative: (a.href.match(/tps?:\/\/[^\/]+(.+)/) || [,''])[1], 
-	segments: a.pathname.replace(/^\//,'').split('/') 
+	    source: url, 
+	    protocol: a.protocol.replace(':', ''), 
+	    host: a.hostname, 
+		  port: a.port, 
+		  query: a.search, 
+		  params: (function(){ 
+			    var ret = {}, 
+			    seg = a.search.replace(/^\?/, '').split('&'), 
+			    len = seg.length, i = 0, s; 
+			    for (; i < len; i++) { 
+				      if (!seg[i]) { continue; } 
+			    s = seg[i].split('='); 
+		      ret[s[0]] = s[1]; 
+	        }
+		      return ret; 
+	   })(),
+
+	    file: (a.pathname.match(/\/([^\/?#]+)$/i) || [,''])[1], 
+	    hash: a.hash.replace('#',''), 
+	    path: a.pathname.replace(/^([^\/])/,'/$1'), 
+	    relative: (a.href.match(/tps?:\/\/[^\/]+(.+)/) || [,''])[1], 
+	    segments: a.pathname.replace(/^\//,'').split('/') 
 	}; 
 }
 
@@ -409,14 +400,13 @@ function backupfileFind(protocol, host, port, path, OnlyPathName) {
     }
 }
 
-function setChildTextNode(newurl,oldurl) {
-    var parsedURL = parseURL(newurl);
+function startScan(url) {
+    var parsedURL = parseURL(url);
     var protocol = parsedURL.protocol;
     var host = parsedURL.host;
     var port = parsedURL.port;
     var path = parsedURL.path;
     var file = parsedURL.file;
-    var oldhost = parseURL(oldurl).host;
 
     pathAry = getPathName(path, file);
     //
