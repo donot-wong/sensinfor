@@ -168,7 +168,7 @@ function svnfinder(protocol, host, port, path){
                  	var responseText = xmlhttp.responseText;
                 	var match1 = responseText.match(/svn/i);
                   var match2 = responseText.match(/dir/i);
-                  var match3 = responseText.match3(/DOCTYPE/i);
+                  var match3 = responseText.match(/DOCTYPE/i);
         						if(match1 && match2 && !match3){
         							updateIcon("fire");
         							show("Svn Leak", svnurl, svnurl);
