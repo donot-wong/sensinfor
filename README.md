@@ -8,6 +8,10 @@ A chrome extension use to find leak file and backup file
 ### updated by [donot](https://blog.donot.me)
 
 
+### 2018.10.18 
+修复bug 调整目录结构
+
+
 ### 2018.8.1
 1. 更新svn检测规则，减少误报
 
