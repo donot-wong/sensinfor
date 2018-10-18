@@ -23,7 +23,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab){
     }
     if(changeInfo.status == "loading"){
     	updateIcon("icon16");
-      if (tab.url.substr(0, 6) != 'chrome') {
+      if (tab.url.substr(0, 6) != 'chrome' && tab.url.substr(0, 11) != 'view-source') {
           startScan(tab.url);
       }
     }
@@ -62,7 +62,7 @@ function parseURL(url) {
 
 //update icon
 function updateIcon(name) {
-  chrome.browserAction.setIcon({path: name + ".png"});
+  chrome.browserAction.setIcon({path: "image/" + name + ".png"});
 }
 
 function copyTextToClipboard(text) {
@@ -98,7 +98,7 @@ function copyTextToClipboard(text) {
 function show(title, content, tagname) {
   var notice = new Notification(title, {
     body: content,
-    icon: "icon48.png",
+    icon: "image/icon48.png",
     tag: tagname, // 可以加一个tag
   });
   
