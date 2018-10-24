@@ -23,7 +23,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab){
     }
     if(changeInfo.status == "loading"){
     	updateIcon("icon16");
-      if (tab.url.substr(0, 6) != 'chrome' && tab.url.substr(0, 11) != 'view-source') {
+      if (tab.url.substr(0, 6) != 'chrome' && tab.url.substr(0, 11) != 'view-source' && tab.url.substr(0, 4) != 'file') {
           startScan(tab.url);
       }
     }
