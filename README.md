@@ -2,11 +2,12 @@
 
 ## A chrome extension use to find leak file and backup file
 
+## updated by [donot](https://blog.donot.me)
 
-### based on Aring QQ:304778619
+### 原始代码来自于 [based on Aring QQ:304778619],只具备git和svn泄漏的探测，在原始代码的基础上信息了重新编写，代码几乎完全重写。
 
-### updated by [donot](https://blog.donot.me)
-
+### 2018.12.07 
+浏览器启动后插件默认为关闭。
 
 ### 2018.10.24
 最近遇到win10 defender拦截下载插件问题，插件核心代码位于js/backgroud.js中，主要行为为通过Ajax发包
