@@ -1,9 +1,9 @@
 ﻿var currenturl;
 var record = sessionStorage;
-var status = true;
+var status = false;
 
 chrome.contextMenus.create({
-    title: "Stop Sensinfor",
+    title: "Start Sensinfor",
     id: "Sensinfor",
     onclick: function(){
         if (status == 'true') {
