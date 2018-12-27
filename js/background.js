@@ -1,9 +1,9 @@
 ﻿var currenturl;
 var record = sessionStorage;
-var status = true;
+var status = false;
 
 chrome.contextMenus.create({
-    title: "Stop Sensinfor",
+    title: "Start Sensinfor",
     id: "Sensinfor",
     onclick: function(){
         if (status == 'true') {
@@ -191,7 +191,8 @@ function svnfindernew(protocol, host, port, path){
                  if(ct != cct){
                   var responseText = xmlhttp.responseText;
                   var match = responseText.match(/SQLite/i);
-                  if(match){
+                  var match3 = responseText.match(/DOCTYPE/i);
+                  if(match && !match3){
                     updateIcon("fire");
                     show("Svn Leak", svnurl_new, svnurl_new);
                   }
@@ -217,7 +218,8 @@ function bash(protocol, host, port, path){
 				 		if (xmlhttp.status == 200) {  
              	var responseText = xmlhttp.responseText;
             	var match = responseText.match(/((cd)\s\w*\/)|(vi\s\w*\.\w*)/i);
-  						if(match){
+              var match3 = responseText.match(/DOCTYPE/i);
+  						if(match && !match3){
   							updateIcon("fire");
   							show("Bash History Leak", bashurl, bashurl);
   						}
