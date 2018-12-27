@@ -28,7 +28,8 @@
   },  
 
   "browser_action": {
-	   "default_icon": "image/icon16.png"
+	   "default_icon": "image/icon16.png",
+     "default_popup": "popup.html"
 	},
 
   "manifest_version":2
