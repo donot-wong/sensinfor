@@ -96,6 +96,7 @@ function copyTextToClipboard(text) {
 
 
 function show(title, content, tagname) {
+  localStorage.setItem(Date.parse(new Date()), content);
   var notice = new Notification(title, {
     body: content,
     icon: "image/icon48.png",
