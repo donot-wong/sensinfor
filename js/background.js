@@ -123,10 +123,8 @@ function gitfinder(protocol, host, port, path){
       complete: function(xmlhttp) { 
         if (xmlhttp.readyState == 4) { 
           if (xmlhttp.status == 200) {  
-                var ct=xmlhttp.getResponseHeader("Connection");
-                var cct= "close";
-                if(ct != cct){
-                  var responseText = xmlhttp.responseText;
+                var responseText = xmlhttp.responseText;
+                if(responseText){
                   var match = responseText.match(/repository/i);
                   var match2 = responseText.match(/DOCTYPE/i);
                     if(match && !match2){
@@ -154,10 +152,10 @@ function svnfinder(protocol, host, port, path){
 				if (xmlhttp.readyState == 4) { 
 				 		//状态码
           if (xmlhttp.status == 200) {  
-                var ct=xmlhttp.getResponseHeader("Connection");
-                var cct= "close";
-                if(ct != cct){
-                 	var responseText = xmlhttp.responseText;
+                // var ct=xmlhttp.getResponseHeader("Connection");
+                // var cct= "close";
+                var responseText = xmlhttp.responseText;
+                if(responseText){
                 	var match1 = responseText.match(/svn/i);
                   var match2 = responseText.match(/dir/i);
                   var match3 = responseText.match(/DOCTYPE/i);
@@ -186,11 +184,8 @@ function svnfindernew(protocol, host, port, path){
            if (xmlhttp.readyState == 4) { 
               //状态码
             if (xmlhttp.status == 200) {  
-                //updateIcon("fire");
-                 var ct=xmlhttp.getResponseHeader("Connection");
-                 var cct= "close";
-                 if(ct != cct){
-                  var responseText = xmlhttp.responseText;
+                var responseText = xmlhttp.responseText;
+                 if(responseText){
                   var match = responseText.match(/SQLite/i);
                   var match3 = responseText.match(/DOCTYPE/i);
                   if(match && !match3){
