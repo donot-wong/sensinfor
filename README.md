@@ -2,13 +2,15 @@
 
 ## A chrome extension use to find leak file and backup file
 
-## updated by [donot](https://blog.donot.me)
+### 2019.05.21
+1. 新增字典.idea泄露检测、部分php文件字典（tz.php l.php等）
+2. 修复存储键值错误导致的显示缺失
+3. 修复文件泄露检测错误导致的漏报
 
-####  原始代码来自于 [based on Aring QQ:304778619],只具备git和svn泄漏的探测，在原始代码的基础上进行了重新编写，代码几乎完全重写。
 
 ### 2018.12.27 
-新增记录功能，记录历史发现的泄漏事件。点击浏览器右上角插件图标即可。
-历史记录采用localStorage进行记录，重启浏览器记录依然存在，而对于检测防重复采用的是sessinStorage，也就是重启浏览器后即会自动清空。
+1. 新增记录功能，记录历史发现的泄漏事件。点击浏览器右上角插件图标即可。
+2. 历史记录采用localStorage进行记录，重启浏览器记录依然存在，而对于检测防重复采用的是sessinStorage，也就是重启浏览器后即会自动清空。
 新增的清空功能只针对历史记录进行清空，由于localStorage空间有限，请及时清空。
 
 
