@@ -410,6 +410,9 @@ function leakFileFind(protocol,host, port, path){
       
           }
           phpmyadmin(protocol, host, port, path + 'phpMyAdmin/');
+          phpmyadmin(protocol, host, port, path + 'phpmyadmin/');
+          phpmyadmin(protocol, host, port, path + 'pmd/');
+          phpmyadmin(protocol, host, port, path + 'phpMyadmin/');
           ideaFinder(protocol, host, port, path);
           setStorage(protocol,host, port, path);
      }
