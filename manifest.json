@@ -1,7 +1,7 @@
 {
   "name": "SensInfo Finder",
-  "description": "By donot base Aring",
-  "version": "1.5", 
+  "description": "by donot",
+  "version": "1.5.2", 
   
   "background": {
       "scripts": [
