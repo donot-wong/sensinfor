@@ -12,6 +12,7 @@ for(var i = 0; i < localStorage.length; i++)
 data = dedupe(data);
 
 if (data) {
+	chrome.browserAction.setIcon({path: "image/icon16.png"});
 	document.getElementById("history").value = data.join('\n');
 }
 

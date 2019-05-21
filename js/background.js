@@ -96,7 +96,7 @@ function copyTextToClipboard(text) {
 
 
 function show(title, content, tagname) {
-  localStorage.setItem(Date.parse(new Date()), content);
+  localStorage.setItem(new Date().getTime(), content);
   var notice = new Notification(title, {
     body: content,
     icon: "image/icon48.png",
@@ -241,7 +241,7 @@ function backupfinder_zip(protocol, host, port, path, filename){
             //状态码
           if (xmlhttp.status == 200) {  
                 var ct=xmlhttp.getResponseHeader("Content-Type");
-                if(ct == "application/zip"){
+                if(ct == "application/zip" || ct == "application/x-zip-compressed"){
                     updateIcon("fire");
                     show("Maybe a backup file find", backupURL_zip, backupURL_zip);
                 }
@@ -299,6 +299,36 @@ function phpinfoFinder(protocol, host, port, path, filename){
                 updateIcon("fire");
                 //alert(phpinfourl);
                 show("A phpinfo file find", phpinfourl, phpinfourl);
+              }
+            }
+        }
+      },
+  });
+}
+
+
+//check phpinfo
+function ideaFinder(protocol, host, port, path){
+  var ideaurl =protocol + "://" + host + path  + ".idea/workspace.xml";
+  if(port){
+    ideaurl =protocol + "://" + host + ":" + port + path + ".idea/workspace.xml";
+  }
+
+  $.ajax({
+      type: "GET",
+      url : ideaurl,
+      complete: function(xmlhttp) { 
+        //完成交互
+        if (xmlhttp.readyState == 4) {
+            //状态码
+          if (xmlhttp.status == 200) {  
+              var responseText = xmlhttp.responseText;
+              var match1 = responseText.match(/project /);
+              var match2 = responseText.match(/component /);
+              if(match1 && match2){
+                updateIcon("fire");
+                //alert(ideaurl);
+                show("A .idea file find", ideaurl, ideaurl);
               }
             }
         }
@@ -369,7 +399,7 @@ function getPathName(path, file){
 function leakFileFind(protocol,host, port, path){
     //文件泄露
     //phpinfo文件
-    var phpinfoFilenameArr = new Array('1', 'php', 'phpinfo', 'test', 'info');
+    var phpinfoFilenameArr = new Array('1', 'php', 'phpinfo', 'test', 'info', 'l', 'u', 'tz', 'p', 'iProber2', 'upload', 'download');
     if (!getStorage(protocol,host, port, path)) {
           bash(protocol,host,port,path);
           gitfinder(protocol,host, port, path);
@@ -377,8 +407,10 @@ function leakFileFind(protocol,host, port, path){
           svnfindernew(protocol,host, port, path);
           for (var j = phpinfoFilenameArr.length - 1; j >= 0; j--) {
               phpinfoFinder(protocol, host, port, path, phpinfoFilenameArr[j]);
+      
           }
           phpmyadmin(protocol, host, port, path + 'phpMyAdmin/');
+          ideaFinder(protocol, host, port, path);
           setStorage(protocol,host, port, path);
      }
 }
@@ -386,11 +418,12 @@ function leakFileFind(protocol,host, port, path){
 
 function backupfileFind(protocol, host, port, path, OnlyPathName) {
     //备份文件
-    var backFilenameArr = new Array('backup', 'www', '2017', '2018', 'back', 'upload', '1')
+    var backFilenameArr = new Array('backup', 'www', '2018', '2019', 'back', 'upload', '1')
     if (!getStorage(protocol, host, port, path + 'backupFind')) {
       for (var i = backFilenameArr.length - 1; i >= 0; i--) {
         backupfinder_zip(protocol, host, port, path, backFilenameArr[i]);
         backupfinder_tar_gz(protocol, host, port, path, backFilenameArr[i]);
+
       }
       backupfinder_zip(protocol, host, port, path, '../' + OnlyPathName);
       backupfinder_tar_gz(protocol, host, port, path, '../' + OnlyPathName);
