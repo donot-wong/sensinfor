@@ -307,7 +307,7 @@ function phpinfoFinder(protocol, host, port, path, filename){
 }
 
 
-//check phpinfo
+//check .idea
 function ideaFinder(protocol, host, port, path){
   var ideaurl =protocol + "://" + host + path  + ".idea/workspace.xml";
   if(port){
@@ -329,6 +329,36 @@ function ideaFinder(protocol, host, port, path){
                 updateIcon("fire");
                 //alert(ideaurl);
                 show("A .idea file find", ideaurl, ideaurl);
+              }
+            }
+        }
+      },
+  });
+}
+
+
+//check spring boot
+function springboot(protocol, host, port, path){
+  var ideaurl =protocol + "://" + host + path  + "env";
+  if(port){
+    ideaurl =protocol + "://" + host + ":" + port + path + "env";
+  }
+
+  $.ajax({
+      type: "GET",
+      url : ideaurl,
+      complete: function(xmlhttp) { 
+        //完成交互
+        if (xmlhttp.readyState == 4) {
+            //状态码
+          if (xmlhttp.status == 200) {  
+              var responseText = xmlhttp.responseText;
+              var match1 = responseText.match(/systemProperties/);
+              var match2 = responseText.match(/JAVA_HOME/);
+              if(match1 && match2){
+                updateIcon("fire");
+                //alert(ideaurl);
+                show("Springboot leak find", ideaurl, ideaurl);
               }
             }
         }
@@ -414,7 +444,8 @@ function leakFileFind(protocol,host, port, path){
           phpmyadmin(protocol, host, port, path + 'pmd/');
           phpmyadmin(protocol, host, port, path + 'phpMyadmin/');
           ideaFinder(protocol, host, port, path);
-          setStorage(protocol,host, port, path);
+          setStorage(protocol, host, port, path);
+          springboot(protocol, host, port, path);
      }
 }
 
