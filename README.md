@@ -1,6 +1,8 @@
 # Sensinfor
 
 ## A chrome extension use to find leak file and backup file
+### 2020.08.16
+1. 新增spring boot接口泄漏规则
 
 ### 2019.05.21
 1. 新增字典.idea泄露检测、部分php文件字典（tz.php l.php等）
