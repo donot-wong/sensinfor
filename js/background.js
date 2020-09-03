@@ -240,8 +240,10 @@ function backupfinder_zip(protocol, host, port, path, filename){
         if (xmlhttp.readyState == 4) { 
             //状态码
           if (xmlhttp.status == 200) {  
-                var ct=xmlhttp.getResponseHeader("Content-Type");
-                if(ct == "application/zip" || ct == "application/x-zip-compressed"){
+                var ct = xmlhttp.getResponseHeader("Content-Type");
+                var ctlength = xmlhttp.getResponseHeader("Content-Length");
+                // console.log(ctlength>50);
+                if( ctlength > 50 && (ct == "application/zip" || ct == "application/x-zip-compressed")){
                     updateIcon("fire");
                     show("Maybe a backup file find", backupURL_zip, backupURL_zip);
                 }
@@ -267,7 +269,8 @@ function backupfinder_tar_gz(protocol, host, port, path, filename){
             //状态码
           if (xmlhttp.status == 200) {  
                 var ct=xmlhttp.getResponseHeader("Content-Type");
-                if(ct == "application/octet-stream"){
+                var ctlength = xmlhttp.getResponseHeader("Content-Length");
+                if(ctlength > 50 && ct == "application/octet-stream"){
                     updateIcon("fire");
                     show("Maybe a backup file find", backupURL_gz, backupURL_gz);
                 }

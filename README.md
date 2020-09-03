@@ -1,6 +1,10 @@
 # Sensinfor
 
 ## A chrome extension use to find leak file and backup file
+### 2020.09.03
+1. 新增备份文件检测规则降低误报
+
+
 ### 2020.08.16
 1. 新增spring boot接口泄漏规则
 
