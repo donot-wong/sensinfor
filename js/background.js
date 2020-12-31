@@ -280,6 +280,33 @@ function backupfinder_tar_gz(protocol, host, port, path, filename){
   });
 }
 
+//find sql backup file
+function sqlfinder(protocol, host, port, path, filename){
+  var sqlURL =protocol + "://" + host + path + filename + ".sql";
+  if(port){
+    sqlURL =protocol + "://" + host + ":" + port + path + filename + ".sql";
+  }
+
+  $.ajax({
+      type: "HEAD",
+      url : sqlURL,
+      complete: function(xmlhttp) { 
+        //完成交互
+        if (xmlhttp.readyState == 4) { 
+            //状态码
+          if (xmlhttp.status == 200) {  
+                var ct=xmlhttp.getResponseHeader("Content-Type");
+                var ctlength = xmlhttp.getResponseHeader("Content-Length");
+                if(ctlength > 50 && ct == "application/octet-stream"){
+                    updateIcon("fire");
+                    show("Maybe a sql file find", sqlURL, sqlURL);
+                }
+            }
+        }
+      },
+  });
+}
+
 //check phpinfo
 function phpinfoFinder(protocol, host, port, path, filename){
   var phpinfourl =protocol + "://" + host + path + filename + ".php";
@@ -485,12 +512,15 @@ function leakFileFind(protocol,host, port, path){
 
 function backupfileFind(protocol, host, port, path, OnlyPathName) {
     //备份文件
-    var backFilenameArr = new Array('backup', 'www', '2018', '2019', 'back', 'upload', '1', 'wwwroot')
+    var backFilenameArr = new Array('backup', 'www', '2018', '2019', 'back', 'upload', '1', 'wwwroot', 'db', 'sql', '2020', '2021');
+    var sqlFilenameArr = new Array('back', 'backup', '2020', '2021', 'database', 'backups', 'db', 'setup', 'sqldump', 'mysql', 'user', 'dump','sql', 'db_backup', '1', '2');
     if (!getStorage(protocol, host, port, path + 'backupFind')) {
       for (var i = backFilenameArr.length - 1; i >= 0; i--) {
         backupfinder_zip(protocol, host, port, path, backFilenameArr[i]);
         backupfinder_tar_gz(protocol, host, port, path, backFilenameArr[i]);
-
+      }
+      for (var i = sqlFilenameArr.length - 1; i >= 0; i--) {
+        sqlfinder(protocol, host, port, path, sqlFilenameArr[i]);
       }
       backupfinder_zip(protocol, host, port, path, '../' + OnlyPathName);
       backupfinder_tar_gz(protocol, host, port, path, '../' + OnlyPathName);
