@@ -369,14 +369,14 @@ function ideaFinder(protocol, host, port, path){
 
 //check spring boot v1
 function springboot(protocol, host, port, path){
-  var ideaurl =protocol + "://" + host + path  + "env";
+  var springbooturl =protocol + "://" + host + path  + "env";
   if(port){
-    ideaurl =protocol + "://" + host + ":" + port + path + "env";
+    springbooturl =protocol + "://" + host + ":" + port + path + "env";
   }
 
   $.ajax({
       type: "GET",
-      url : ideaurl,
+      url : springbooturl,
       complete: function(xmlhttp) { 
         //完成交互
         if (xmlhttp.readyState == 4) {
@@ -387,8 +387,8 @@ function springboot(protocol, host, port, path){
               var match2 = responseText.match(/JAVA_HOME/);
               if(match1 && match2){
                 updateIcon("fire");
-                //alert(ideaurl);
-                show("Springboot leak find", ideaurl, ideaurl);
+                //alert(springbooturl);
+                show("Springboot leak find", springbooturl, springbooturl);
               }
             }
         }
@@ -398,14 +398,14 @@ function springboot(protocol, host, port, path){
 
 //check spring boot v2
 function springboot2(protocol, host, port, path){
-  var ideaurl =protocol + "://" + host + path  + "actuator/env";
+  var springboot2url =protocol + "://" + host + path  + "actuator/env";
   if(port){
-    ideaurl =protocol + "://" + host + ":" + port + path + "actuator/env";
+    springboot2url =protocol + "://" + host + ":" + port + path + "actuator/env";
   }
 
   $.ajax({
       type: "GET",
-      url : ideaurl,
+      url : springboot2url,
       complete: function(xmlhttp) { 
         //完成交互
         if (xmlhttp.readyState == 4) {
@@ -416,8 +416,38 @@ function springboot2(protocol, host, port, path){
               var match2 = responseText.match(/JAVA_HOME/);
               if(match1 && match2){
                 updateIcon("fire");
-                //alert(ideaurl);
-                show("Springboot leak find", ideaurl, ideaurl);
+                //alert(springbooturl);
+                show("Springboot leak find", springboot2url, springboot2url);
+              }
+            }
+        }
+      },
+  });
+}
+
+
+//check spring boot swagger
+function springbootswagger(protocol, host, port, path){
+  var springbootswaggerurl =protocol + "://" + host + path  + "swagger-ui.html";
+  if(port){
+    springbootswaggerurl =protocol + "://" + host + ":" + port + path + "swagger-ui.html";
+  }
+
+  $.ajax({
+      type: "GET",
+      url : springbootswaggerurl,
+      complete: function(xmlhttp) { 
+        //完成交互
+        if (xmlhttp.readyState == 4) {
+            //状态码
+          if (xmlhttp.status == 200) {  
+              var responseText = xmlhttp.responseText;
+              var match1 = responseText.match(/Apache/);
+              var match2 = responseText.match(/swagger/);
+              if(match1 && match2){
+                updateIcon("fire");
+                //alert(springbootswaggerurl);
+                show("Springboot swagger leak find", springbootswaggerurl, springbootswaggerurl);
               }
             }
         }
@@ -506,6 +536,7 @@ function leakFileFind(protocol,host, port, path){
           setStorage(protocol, host, port, path);
           springboot(protocol, host, port, path);
           springboot2(protocol, host, port, path);
+          springbootswagger(protocol, host, port, path);
      }
 }
 
