@@ -442,8 +442,8 @@ function springbootswagger(protocol, host, port, path){
             //状态码
           if (xmlhttp.status == 200) {  
               var responseText = xmlhttp.responseText;
-              var match1 = responseText.match(/Apache/);
-              var match2 = responseText.match(/swagger/);
+              var match1 = responseText.match(/spring/);
+              var match2 = responseText.match(/swagger-ui/);
               if(match1 && match2){
                 updateIcon("fire");
                 //alert(springbootswaggerurl);
