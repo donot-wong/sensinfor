@@ -456,6 +456,36 @@ function springbootswagger(protocol, host, port, path){
 }
 
 
+//check druid
+function druid(protocol, host, port, path){
+  var druidurl =protocol + "://" + host + path  + "druid/index.html";
+  if(port){
+    druidurl =protocol + "://" + host + ":" + port + path + "druid/index.html";
+  }
+
+  $.ajax({
+      type: "GET",
+      url : druidurl,
+      complete: function(xmlhttp) { 
+        //完成交互
+        if (xmlhttp.readyState == 4) {
+            //状态码
+          if (xmlhttp.status == 200) {  
+              var responseText = xmlhttp.responseText;
+              var match1 = responseText.match(/Druid/);
+              var match2 = responseText.match(/Monitor/);
+              if(match1 && match2){
+                updateIcon("fire");
+                //alert(springbootswaggerurl);
+                show("druid swagger leak find", druidurl, druidurl);
+              }
+            }
+        }
+      },
+  });
+}
+
+
 //check phpmyadmin
 function phpmyadmin(protocol, host, port, path){
   var phpmyadminurl = protocol + "://" + host + path + "index.php";
@@ -537,6 +567,7 @@ function leakFileFind(protocol,host, port, path){
           springboot(protocol, host, port, path);
           springboot2(protocol, host, port, path);
           springbootswagger(protocol, host, port, path);
+          druid(protocol, host, port, path);
      }
 }
 
