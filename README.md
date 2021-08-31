@@ -1,6 +1,14 @@
 # Sensinfor
 
 ## A chrome extension use to find leak file and backup file
+
+### 2021.8.31
+1. 新增druid检测
+
+### 2021.4.20
+1. 新增spring actuator检测
+2. 新增spring swagger检测
+
 ### 2020.12.31
 1. 新增备份文件检测字典
 2. 新增sql文件检测
